@@ -22,3 +22,10 @@ phase0/output/
 # 测试图片（真实图片涉及隐私，不进入仓库）
 phase0/test_images/
 phase0/test.png
+
+# Phase 1 自动化流水线运行时数据（输入/输出/失败/日志/去重状态）
+input/
+output/
+failed/
+logs/
+processed.json
