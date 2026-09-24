@@ -1,12 +1,15 @@
-"""版面理解：区域划分 + 内容分组（Phase 2 MVP）。
+"""版面理解：区域划分 + 内容分组（Phase 2 + Phase 3）。
 
-基于 block 类型与顺序做启发式分析，不依赖坐标（当前 schema 无 bbox）。
-
-输入：OCRDocument 的 blocks 列表
-输出：PageLayout（header / main_groups / footer）
+- 无 bbox：沿用 Phase 2 启发式（基于 block 类型与顺序），向后兼容。
+- 有 bbox：基于归一化坐标识别左右双栏，做双栏感知的题目+答案分组。
 """
 
 from dataclasses import dataclass, field
+
+# 归一化坐标阈值（与 ordering 保持一致）
+SPAN_WIDTH_THRESHOLD = 0.6   # width > 0.6 视为「跨栏」
+COLUMN_GAP_THRESHOLD = 0.3   # cx 相邻最大间隙 > 0.3 视为分栏
+COLUMN_SPLIT = 0.5           # cx < 0.5 左栏，>= 0.5 右栏
 
 
 @dataclass
@@ -51,13 +54,53 @@ class PageLayout:
     footer: list = field(default_factory=list)
 
 
+# ---------------------------------------------------------------- bbox helpers
+
+def _get_bbox(block):
+    bbox = block.get("bbox")
+    if not isinstance(bbox, dict):
+        return None
+    for k in ("x", "y", "width", "height"):
+        if not isinstance(bbox.get(k), (int, float)):
+            return None
+    return bbox
+
+
+def _has_bbox(blocks):
+    return bool(blocks) and all(_get_bbox(b) is not None for b in blocks)
+
+
+def _cx(block):
+    b = _get_bbox(block)
+    return b["x"] + b["width"] / 2
+
+
+def _cy(block):
+    b = _get_bbox(block)
+    return b["y"] + b["height"] / 2
+
+
+def _is_spanning(block):
+    return _get_bbox(block)["width"] > SPAN_WIDTH_THRESHOLD
+
+
+def _detect_columns(in_col):
+    if len(in_col) < 2:
+        return 1
+    cxs = sorted(_cx(b) for b in in_col)
+    max_gap = max(cxs[i] - cxs[i - 1] for i in range(1, len(cxs)))
+    return 2 if max_gap > COLUMN_GAP_THRESHOLD else 1
+
+
+# ---------------------------------------------------------------- analyze
+
 def analyze_layout(blocks):
     """划分 header / main / footer，并对 main 做题目+答案分组。"""
     blocks = list(blocks or [])
     if not blocks:
         return PageLayout()
 
-    # 第一个 level<=2 的 heading 作为 main 起点
+    # 第一个 level<=2 的 heading 作为 main 起点（两种模式共用）
     main_start = len(blocks)
     for i, b in enumerate(blocks):
         if b.get("type") == "heading" and int(b.get("level", 9)) <= 2:
@@ -67,7 +110,7 @@ def analyze_layout(blocks):
     header = blocks[:main_start]
     main_blocks = blocks[main_start:]
 
-    # footer：结尾与章节标题相同的重复 heading
+    # footer：结尾与章节标题相同的重复 heading（两种模式共用）
     footer = []
     first_heading_text = None
     for b in main_blocks:
@@ -83,7 +126,13 @@ def analyze_layout(blocks):
             break
     footer = list(reversed(tail))
 
-    return PageLayout(header=header, main=_group_blocks(main_blocks), footer=footer)
+    # main 分组：有 bbox 用双栏感知，无 bbox 用现有启发式
+    if _has_bbox(blocks):
+        groups = _group_blocks_with_columns(main_blocks)
+    else:
+        groups = _group_blocks(main_blocks)
+
+    return PageLayout(header=header, main=groups, footer=footer)
 
 
 def _group_blocks(blocks):
@@ -102,3 +151,21 @@ def _group_blocks(blocks):
             else:
                 current.add(block)
     return groups
+
+
+def _group_blocks_with_columns(blocks):
+    """双栏感知分组：跨栏标题单独成组，左栏/右栏各自做题目+答案配对。"""
+    spanning = [b for b in blocks if _is_spanning(b)]
+    in_col = [b for b in blocks if not _is_spanning(b)]
+
+    if _detect_columns(in_col) <= 1:
+        # 单栏：沿用现有分组
+        return _group_blocks(blocks)
+
+    left = sorted([b for b in in_col if _cx(b) < COLUMN_SPLIT], key=_cy)
+    right = sorted([b for b in in_col if _cx(b) >= COLUMN_SPLIT], key=_cy)
+
+    result = [BlockGroup(blocks=[b]) for b in sorted(spanning, key=_cy)]
+    result.extend(_group_blocks(left))
+    result.extend(_group_blocks(right))
+    return result
