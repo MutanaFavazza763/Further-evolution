@@ -52,6 +52,7 @@ class PageLayout:
     header: list = field(default_factory=list)
     main: list = field(default_factory=list)   # list[BlockGroup]
     footer: list = field(default_factory=list)
+    spanning: list = field(default_factory=list)  # list[BlockGroup]（全宽标题，双栏时）
 
 
 # ---------------------------------------------------------------- bbox helpers
@@ -126,13 +127,13 @@ def analyze_layout(blocks):
             break
     footer = list(reversed(tail))
 
-    # main 分组：有 bbox 用双栏感知，无 bbox 用现有启发式
+    # main 分组：有 bbox 分离 spanning，无 bbox 用现有启发式
     if _has_bbox(blocks):
-        groups = _group_blocks_with_columns(main_blocks)
+        spanning_groups, main_groups = _split_spanning(main_blocks)
     else:
-        groups = _group_blocks(main_blocks)
+        spanning_groups, main_groups = [], _group_blocks(main_blocks)
 
-    return PageLayout(header=header, main=groups, footer=footer)
+    return PageLayout(header=header, main=main_groups, footer=footer, spanning=spanning_groups)
 
 
 def _group_blocks(blocks):
@@ -153,19 +154,22 @@ def _group_blocks(blocks):
     return groups
 
 
-def _group_blocks_with_columns(blocks):
-    """双栏感知分组：跨栏标题单独成组，左栏/右栏各自做题目+答案配对。"""
-    spanning = [b for b in blocks if _is_spanning(b)]
-    in_col = [b for b in blocks if not _is_spanning(b)]
+def _split_spanning(main_blocks):
+    """分离跨栏标题和栏内容，返回 (spanning_groups, column_groups)。
+
+    只有确认双栏时，才把 _is_spanning 识别的 heading 分离到 spanning。
+    单栏时返回 ([], _group_blocks(main_blocks))，保持原有分组行为。
+    """
+    spanning_blocks = [b for b in main_blocks if _is_spanning(b)]
+    in_col = [b for b in main_blocks if not _is_spanning(b)]
 
     if _detect_columns(in_col) <= 1:
-        # 单栏：沿用现有分组
-        return _group_blocks(blocks)
+        # 单栏：无跨栏概念，全部作为栏内容
+        return [], _group_blocks(main_blocks)
 
+    # 双栏：spanning 按 y 排序单独成组，栏内容按左栏→右栏分组
+    spanning_groups = [BlockGroup(blocks=[b]) for b in sorted(spanning_blocks, key=_cy)]
     left = sorted([b for b in in_col if _cx(b) < COLUMN_SPLIT], key=_cy)
     right = sorted([b for b in in_col if _cx(b) >= COLUMN_SPLIT], key=_cy)
-
-    result = [BlockGroup(blocks=[b]) for b in sorted(spanning, key=_cy)]
-    result.extend(_group_blocks(left))
-    result.extend(_group_blocks(right))
-    return result
+    column_groups = _group_blocks(left) + _group_blocks(right)
+    return spanning_groups, column_groups

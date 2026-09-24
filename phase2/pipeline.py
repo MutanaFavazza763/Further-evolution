@@ -18,7 +18,7 @@ from docx_builder import render_reflow
 from ocrdoc_schema import validate_ocr_document
 
 from layout import analyze_layout
-from ordering import order_groups
+from ordering import order_blocks, order_groups
 from reflow import choose_columns, reflow
 from renderer import PageRenderer
 
@@ -31,7 +31,8 @@ def build_layout(json_path, columns=None):
     if errors:
         raise ValueError("Schema 校验失败: {}".format(errors[0].message))
 
-    layout = analyze_layout(data.get("blocks", []))
+    blocks = order_blocks(data.get("blocks", []))
+    layout = analyze_layout(blocks)
     groups = order_groups(layout.main)
 
     if columns is None:

@@ -22,9 +22,9 @@ def _group_types(layout):
     return [[b.get("type") for b in g.blocks] for g in layout.main]
 
 
-def _group_labels(layout):
+def _labels_of(groups):
     result = []
-    for g in layout.main:
+    for g in groups:
         b = g.blocks[0]
         t = b.get("type")
         if t == "heading":
@@ -55,14 +55,17 @@ class TestLayoutBbox(unittest.TestCase):
     def test_double_column_separates_columns(self):
         blocks = _load("double_column_bbox.json")["blocks"]
         layout = analyze_layout(order_blocks(blocks))
-        self.assertEqual(_group_labels(layout), ["标题", "1", "2", "3", "4", "5"])
+        # 标题在 spanning（全宽），main 只剩左右栏内容
+        self.assertEqual(_labels_of(layout.spanning), ["标题"])
+        self.assertEqual(_labels_of(layout.main), ["1", "2", "3", "4", "5"])
 
     def test_spanning_title_separates_columns(self):
         blocks = _load("spanning_title_bbox.json")["blocks"]
         layout = analyze_layout(order_blocks(blocks))
+        self.assertEqual(_labels_of(layout.spanning), ["章节标题"])
         self.assertEqual(
-            _group_labels(layout),
-            ["章节标题", "左1", "左2", "左3", "右1", "右2", "右3"],
+            _labels_of(layout.main),
+            ["左1", "左2", "左3", "右1", "右2", "右3"],
         )
 
 

@@ -266,6 +266,11 @@ def render_reflow(layout, columns, output_path, xsl_path=None):
     for block in layout.header:
         _render_block(doc, block, xsl_path)
 
+    # spanning：全宽标题，渲染在 main 多栏表格之前
+    for group in getattr(layout, "spanning", []):
+        for block in group.blocks:
+            _render_block(doc, block, xsl_path)
+
     # main：表格模拟多栏
     n_cols = len(columns)
     if n_cols > 0:
