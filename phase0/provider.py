@@ -44,6 +44,13 @@ A "run" object is either:
 - {"kind":"text","text":"..."}
 - {"kind":"formula","latex":"..."}
 
+Every block object MUST also include a "bbox" object with normalized coordinates
+(floats from 0.0 to 1.0, relative to the WHOLE image, origin at the TOP-LEFT corner):
+- "bbox": {"x": <left>, "y": <top>, "width": <w>, "height": <h>}
+- x = left edge, y = top edge, width/height = block size, all as fractions of the
+  image's full width/height.
+Example: "bbox": {"x": 0.05, "y": 0.10, "width": 0.40, "height": 0.15}
+
 Rules:
 - Preserve reading order (top to bottom, left to right).
 - Distinguish headings, body paragraphs, list items, tables, and formulas.
@@ -51,6 +58,7 @@ Rules:
 - Inline math mixed with text -> use a "paragraph" with multiple runs.
 - Handwritten content -> "handwritten" type.
 - Pure figures/diagrams/illustrations (no text) -> "image" type.
+- Every block MUST include a "bbox" with normalized 0-1 coordinates (top-left origin).
 - Output ONLY the JSON object."""
 
 USER_PROMPT = "Extract the full document structure from this image as OCRDocument JSON."
