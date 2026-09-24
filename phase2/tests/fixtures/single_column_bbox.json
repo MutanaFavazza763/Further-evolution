@@ -1,0 +1,36 @@
+{
+  "schema_version": "1.0",
+  "blocks": [
+    {
+      "type": "heading",
+      "level": 1,
+      "text": "第一章 集合",
+      "bbox": {"x": 0.15, "y": 0.05, "width": 0.70, "height": 0.08}
+    },
+    {
+      "type": "paragraph",
+      "runs": [{"kind": "text", "text": "题目一"}],
+      "bbox": {"x": 0.15, "y": 0.18, "width": 0.70, "height": 0.10}
+    },
+    {
+      "type": "handwritten",
+      "runs": [{"kind": "text", "text": "A"}],
+      "bbox": {"x": 0.70, "y": 0.18, "width": 0.15, "height": 0.10}
+    },
+    {
+      "type": "paragraph",
+      "runs": [{"kind": "text", "text": "题目二"}],
+      "bbox": {"x": 0.15, "y": 0.32, "width": 0.70, "height": 0.10}
+    },
+    {
+      "type": "handwritten",
+      "runs": [{"kind": "text", "text": "B"}],
+      "bbox": {"x": 0.70, "y": 0.32, "width": 0.15, "height": 0.10}
+    },
+    {
+      "type": "paragraph",
+      "runs": [{"kind": "text", "text": "题目三"}],
+      "bbox": {"x": 0.15, "y": 0.46, "width": 0.70, "height": 0.10}
+    }
+  ]
+}

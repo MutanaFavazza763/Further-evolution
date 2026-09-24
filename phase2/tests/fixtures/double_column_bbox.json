@@ -1,0 +1,36 @@
+{
+  "schema_version": "1.0",
+  "blocks": [
+    {
+      "type": "paragraph",
+      "runs": [{"kind": "text", "text": "1"}],
+      "bbox": {"x": 0.08, "y": 0.20, "width": 0.35, "height": 0.10}
+    },
+    {
+      "type": "paragraph",
+      "runs": [{"kind": "text", "text": "4"}],
+      "bbox": {"x": 0.58, "y": 0.20, "width": 0.35, "height": 0.10}
+    },
+    {
+      "type": "heading",
+      "level": 1,
+      "text": "标题",
+      "bbox": {"x": 0.10, "y": 0.05, "width": 0.80, "height": 0.08}
+    },
+    {
+      "type": "paragraph",
+      "runs": [{"kind": "text", "text": "2"}],
+      "bbox": {"x": 0.08, "y": 0.35, "width": 0.35, "height": 0.10}
+    },
+    {
+      "type": "paragraph",
+      "runs": [{"kind": "text", "text": "5"}],
+      "bbox": {"x": 0.58, "y": 0.35, "width": 0.35, "height": 0.10}
+    },
+    {
+      "type": "paragraph",
+      "runs": [{"kind": "text", "text": "3"}],
+      "bbox": {"x": 0.08, "y": 0.50, "width": 0.35, "height": 0.10}
+    }
+  ]
+}
