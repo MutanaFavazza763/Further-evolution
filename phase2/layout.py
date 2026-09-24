@@ -101,8 +101,8 @@ def analyze_layout(blocks):
     if not blocks:
         return PageLayout()
 
-    # 第一个 level<=2 的 heading 作为 main 起点（两种模式共用）
-    main_start = len(blocks)
+    # 第一个 level<=2 的 heading 作为 main 起点；无此类 heading 时全部归 main
+    main_start = 0
     for i, b in enumerate(blocks):
         if b.get("type") == "heading" and int(b.get("level", 9)) <= 2:
             main_start = i

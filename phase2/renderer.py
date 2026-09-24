@@ -158,6 +158,10 @@ class PageRenderer:
                 if not text:
                     continue
                 for ch in text:
+                    if ch == "\n":
+                        cur_y += cur_h + 4
+                        x = x0
+                        continue
                     w = self.draw.textlength(ch, font=font)
                     if x + w > max_x and x > x0:
                         cur_y += cur_h + 4
