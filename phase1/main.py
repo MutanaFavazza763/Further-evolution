@@ -18,6 +18,9 @@ import sys
 import time
 from pathlib import Path
 
+# 复用 phase0 已验证模块（provider）
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "phase0"))
+
 from pipeline import Pipeline, ProcessRecordStore, is_file_stable
 from provider import MIME_TYPES, OpenAICompatProvider
 

@@ -13,8 +13,12 @@ import hashlib
 import json
 import logging
 import shutil
+import sys
 import time
 from pathlib import Path
+
+# 复用 phase0 已验证模块（provider / ocrdoc_schema / docx_builder）
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "phase0"))
 
 from docx_builder import render_document
 from ocrdoc_schema import extract_json_from_text, validate_ocr_document
