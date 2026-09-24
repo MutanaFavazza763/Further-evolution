@@ -432,3 +432,123 @@ Phase 0：技术验证
 6. LaTeX → MathML → OMML → Word 是否可行
 
 只有验证结果达到可接受程度后，才进入正式开发。
+
+【Git / GitHub 提交规则——必须遵守】
+
+从现在开始，本项目的所有开发工作都必须遵守以下 Git 规则。
+
+1. 每次完成一个独立、可运行、可验证的功能或修改后，必须创建一次 Git commit。
+
+2. 不允许长时间积累大量未提交修改。
+   一个功能完成并通过基本测试后，应立即 commit。
+
+3. 每次 commit 前必须检查：
+
+   git status
+   git diff
+   git diff --cached
+
+   确认没有意外修改、敏感信息或不应该提交的文件。
+
+4. Commit message 必须清晰说明本次修改内容。
+
+   推荐格式：
+
+   feat: 添加文件夹自动监控
+   feat: 添加 DOCX 自动生成
+   fix: 修复公式渲染问题
+   fix: 修复重复 OCR 问题
+   refactor: 重构 OCR pipeline
+   test: 添加 OCR 测试
+   docs: 更新项目文档
+   chore: 更新依赖
+
+5. 每次 commit 完成后，必须立即推送到 GitHub。
+
+   默认执行：
+
+   git push
+
+   如果当前分支尚未设置 upstream，则使用：
+
+   git push -u origin <当前分支>
+
+6. 如果项目存在 tags，并且本次开发创建了新的 tag，也必须同步推送：
+
+   git push origin <tag>
+
+7. 不允许为了方便而执行：
+
+   git reset --hard
+   git rebase
+   git commit --amend
+   git push --force
+   git push --force-with-lease
+
+   除非我明确要求。
+
+8. 不允许删除、覆盖或重写已有 commit 历史。
+
+9. 如果发现以下情况，必须暂停 push，并先告诉我：
+
+   - API Key
+   - Token
+   - Password
+   - 私钥
+   - Cookie
+   - .env 中的敏感信息
+   - 其他凭据
+
+10. 不要因为“需要 commit”而提交明显不应该进入 Git 的文件。
+
+   包括但不限于：
+
+   - .env
+   - API 密钥文件
+   - Python 虚拟环境
+   - __pycache__
+   - *.pyc
+   - 临时日志
+   - 临时 OCR 输出
+   - 编译产生的临时文件
+
+11. 如果某次修改没有实际产生代码或项目文件变化，则不需要创建空 commit。
+
+12. 如果一次任务包含多个相互独立的功能，可以分别 commit，而不是把所有修改塞进一个巨大的 commit。
+
+13. 如果一次修改涉及多个文件，但它们共同构成同一个完整功能，可以使用一个 commit。
+
+14. 每次 commit 后必须确认 push 是否成功。
+
+15. 如果 push 失败：
+   - 不要假装成功
+   - 不要重复进行危险操作
+   - 分析失败原因
+   - 告诉我具体错误
+   - 等待进一步处理
+
+16. 每次完成任务后，向我报告：
+
+   Commit:
+   <commit hash>
+
+   Message:
+   <commit message>
+
+   Push:
+   SUCCESS / FAILED
+
+   Branch:
+   <branch>
+
+17. 最重要的规则：
+
+   【完成一个可验证的开发步骤 → 测试 → 检查 → commit → push 到 GitHub】
+
+   GitHub 上的仓库应始终尽可能保持与本地已完成开发状态同步。
+
+18. 在开始下一项较大的开发任务之前，先确认当前工作区：
+
+   git status
+
+   如果存在上一阶段未提交的修改，应优先处理上一阶段的 commit，而不是继续无期限累积修改。
