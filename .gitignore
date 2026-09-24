@@ -1,0 +1,24 @@
+# 环境变量与密钥（绝不提交）
+.env
+.env.*
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+
+# IDE 临时文件
+.vscode/
+.idea/
+*.swp
+
+# 测试输出（OCR 原始响应、结果 JSON、生成的 docx、Word 锁文件）
+phase0/output/
+~$*.docx
+
+# 测试图片（真实图片涉及隐私，不进入仓库）
+phase0/test_images/
+phase0/test.png
