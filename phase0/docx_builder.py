@@ -11,8 +11,10 @@ import os
 from copy import deepcopy
 
 from docx import Document
+from docx.enum.section import WD_ORIENTATION
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.oxml.ns import qn
+from docx.shared import Inches, Pt
 from lxml import etree
 from latex2mathml.converter import convert as latex_to_mathml
 
@@ -167,6 +169,118 @@ def render_document(data, output_path, xsl_path=None):
             p = doc.add_paragraph()
             r = p.add_run("[图片块：暂未实现]")
             _set_run_font(r)
+
+    doc.save(output_path)
+    return output_path
+
+
+# ---------------------------------------------------------------------------
+# Phase 2：横向 16:9 重排渲染
+# ---------------------------------------------------------------------------
+
+def _setup_landscape_16_9(doc):
+    """设置横向 + 16:9 页面尺寸（13.333 × 7.5 英寸）。"""
+    section = doc.sections[0]
+    section.orientation = WD_ORIENTATION.LANDSCAPE
+    section.page_width = Inches(13.333)
+    section.page_height = Inches(7.5)
+    section.left_margin = Inches(0.6)
+    section.right_margin = Inches(0.6)
+    section.top_margin = Inches(0.5)
+    section.bottom_margin = Inches(0.5)
+
+
+def _render_block(container, block, xsl_path):
+    """把单个 block 渲染到容器（Document 或 _Cell）。"""
+    btype = block.get("type")
+    if btype == "heading":
+        text = block.get("text", "")
+        if not text:
+            return
+        level = max(1, min(6, int(block.get("level", 1))))
+        p = container.add_paragraph()
+        r = p.add_run(text)
+        r.bold = True
+        r.font.size = Pt({1: 22, 2: 18, 3: 15}.get(level, 15))
+        _set_run_font(r)
+
+    elif btype in ("paragraph", "handwritten"):
+        runs = block.get("runs") or []
+        if not runs:
+            return
+        p = container.add_paragraph()
+        _add_runs(p, runs, xsl_path)
+
+    elif btype == "list":
+        for item in block.get("items", []):
+            p = container.add_paragraph()
+            _add_runs(p, item, xsl_path)
+
+    elif btype == "formula":
+        latex = block.get("latex", "")
+        if not latex:
+            return
+        p = container.add_paragraph()
+        try:
+            omml = latex_to_omml(latex, xsl_path)
+            _add_omml(p, omml)
+        except Exception:
+            r = p.add_run(latex)
+            _set_run_font(r)
+
+    elif btype == "image":
+        p = container.add_paragraph()
+        r = p.add_run("[图片]")
+        _set_run_font(r)
+
+    elif btype == "table":
+        # 嵌套表格：MVP 简化为文本行
+        for row in block.get("rows", []):
+            parts = []
+            for cell in row:
+                if isinstance(cell, str):
+                    parts.append(cell)
+                elif isinstance(cell, dict):
+                    parts.append("".join(
+                        r.get("text", "") or r.get("latex", "")
+                        for r in cell.get("runs", [])
+                    ))
+            p = container.add_paragraph()
+            r = p.add_run(" | ".join(parts))
+            _set_run_font(r)
+
+
+def render_reflow(layout, columns, output_path, xsl_path=None):
+    """把版面分析结果渲染成横向 16:9 多栏 DOCX。
+
+    layout：phase2.layout.PageLayout
+    columns：list[list[BlockGroup]]，来自 phase2.reflow.reflow
+    """
+    xsl_path = xsl_path or os.environ.get(
+        "OCR2WORD_MML2OMML_XSL", DEFAULT_XSL_PATH
+    )
+    doc = Document()
+    _setup_landscape_16_9(doc)
+
+    # header（顶部，跨栏）
+    for block in layout.header:
+        _render_block(doc, block, xsl_path)
+
+    # main：表格模拟多栏
+    n_cols = len(columns)
+    if n_cols > 0:
+        table = doc.add_table(rows=1, cols=n_cols)
+        for col_idx, col_groups in enumerate(columns):
+            cell = table.cell(0, col_idx)
+            first_p = cell.paragraphs[0]._p
+            first_p.getparent().remove(first_p)
+            for group in col_groups:
+                for block in group.blocks:
+                    _render_block(cell, block, xsl_path)
+
+    # footer（底部，跨栏）
+    for block in layout.footer:
+        _render_block(doc, block, xsl_path)
 
     doc.save(output_path)
     return output_path
