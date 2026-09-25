@@ -33,9 +33,10 @@ def _cx(block):
     return bbox["x"] + bbox["width"] / 2
 
 
-def _cy(block):
+def _top_y(block):
+    """返回 block 顶部 y，用于保持高块与其起始内容的阅读顺序。"""
     bbox = _get_bbox(block)
-    return bbox["y"] + bbox["height"] / 2
+    return bbox["y"]
 
 
 def _is_spanning(block):
@@ -63,12 +64,12 @@ def order_blocks_by_bbox(blocks):
 
     if _detect_columns(in_col) <= 1:
         # 单栏：整体按 y 排序（稳定排序，同 y 保持原顺序）
-        return sorted(blocks, key=_cy)
+        return sorted(blocks, key=_top_y)
 
-    left = sorted([b for b in in_col if _cx(b) < COLUMN_SPLIT], key=_cy)
-    right = sorted([b for b in in_col if _cx(b) >= COLUMN_SPLIT], key=_cy)
+    left = sorted([b for b in in_col if _cx(b) < COLUMN_SPLIT], key=_top_y)
+    right = sorted([b for b in in_col if _cx(b) >= COLUMN_SPLIT], key=_top_y)
 
-    result = sorted(spanning, key=_cy)
+    result = sorted(spanning, key=_top_y)
     result.extend(left)
     result.extend(right)
     return result

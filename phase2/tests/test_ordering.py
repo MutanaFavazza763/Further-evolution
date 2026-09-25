@@ -68,6 +68,23 @@ class TestOrdering(unittest.TestCase):
         blocks = _load("single_column_scattered_bbox.json")["blocks"]
         self.assertEqual(_labels(order_blocks(blocks)), ["1", "2", "3", "4"])
 
+    def test_tall_block_uses_top_edge_for_vertical_order(self):
+        blocks = [
+            {"type": "paragraph", "runs": [{"kind": "text", "text": "左栏"}],
+             "bbox": {"x": 0.05, "y": 0.20, "width": 0.35, "height": 0.05}},
+            {"type": "paragraph", "runs": [{"kind": "text", "text": "题15"}],
+             "bbox": {"x": 0.55, "y": 0.239, "width": 0.35, "height": 0.125}},
+            {"type": "handwritten", "runs": [{"kind": "text", "text": "题15答案"}],
+             "bbox": {"x": 0.55, "y": 0.368, "width": 0.35, "height": 0.53}},
+            {"type": "image", "bbox": {"x": 0.90, "y": 0.412, "width": 0.08, "height": 0.068}},
+            {"type": "paragraph", "runs": [{"kind": "text", "text": "错题本"}],
+             "bbox": {"x": 0.90, "y": 0.481, "width": 0.08, "height": 0.018}},
+        ]
+        self.assertEqual(
+            _labels(order_blocks(blocks)),
+            ["左栏", "题15", "题15答案", "", "错题本"],
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

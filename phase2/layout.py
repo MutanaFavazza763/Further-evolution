@@ -76,9 +76,10 @@ def _cx(block):
     return b["x"] + b["width"] / 2
 
 
-def _cy(block):
+def _top_y(block):
+    """返回 block 顶部 y，用于保持高块与其起始内容的阅读顺序。"""
     b = _get_bbox(block)
-    return b["y"] + b["height"] / 2
+    return b["y"]
 
 
 def _is_spanning(block):
@@ -168,8 +169,8 @@ def _split_spanning(main_blocks):
         return [], _group_blocks(main_blocks)
 
     # 双栏：spanning 按 y 排序单独成组，栏内容按左栏→右栏分组
-    spanning_groups = [BlockGroup(blocks=[b]) for b in sorted(spanning_blocks, key=_cy)]
-    left = sorted([b for b in in_col if _cx(b) < COLUMN_SPLIT], key=_cy)
-    right = sorted([b for b in in_col if _cx(b) >= COLUMN_SPLIT], key=_cy)
+    spanning_groups = [BlockGroup(blocks=[b]) for b in sorted(spanning_blocks, key=_top_y)]
+    left = sorted([b for b in in_col if _cx(b) < COLUMN_SPLIT], key=_top_y)
+    right = sorted([b for b in in_col if _cx(b) >= COLUMN_SPLIT], key=_top_y)
     column_groups = _group_blocks(left) + _group_blocks(right)
     return spanning_groups, column_groups
