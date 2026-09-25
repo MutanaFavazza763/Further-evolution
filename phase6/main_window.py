@@ -70,7 +70,7 @@ class FurtherEvolutionMainWindow(QMainWindow):
         self.editor_windows = []
         self.worker_thread = None
         self.worker = None
-        self.setWindowTitle("展台再进化")
+        self.setWindowTitle("Evolution")
         self.resize(860, 670)
         self._build_ui()
 
@@ -90,7 +90,7 @@ class FurtherEvolutionMainWindow(QMainWindow):
         layout.setContentsMargins(28, 24, 28, 24)
         layout.setSpacing(16)
 
-        title = QLabel("展台再进化")
+        title = QLabel("FurtherEvolution")
         title.setStyleSheet("font-size: 26px; font-weight: 600;")
         subtitle = QLabel("选择一张图片，填写本次使用的模型配置，即可生成可编辑 Word。")
         subtitle.setStyleSheet("color: #5f6368;")
