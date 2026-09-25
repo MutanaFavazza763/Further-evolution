@@ -1,13 +1,18 @@
 """桌面 UI 到既有 OCR 流水线的适配层。"""
 
 import hashlib
+import json
 import shutil
 import tempfile
 from dataclasses import dataclass
 from pathlib import Path
 
+from phase0.docx_builder import render_reflow
 from phase0.provider import MIME_TYPES, OpenAICompatProvider
 from phase1.pipeline import Pipeline, ProcessRecordStore
+from phase2.layout import analyze_layout
+from phase2.ordering import order_blocks, order_groups
+from phase2.reflow import choose_columns, reflow
 
 
 @dataclass(frozen=True)
@@ -21,6 +26,7 @@ class ProcessingRequest:
     model: str
     timeout: int = 120
     max_retries: int = 2
+    reflow: bool = False
 
     def validate(self):
         if not self.image_path.is_file():
@@ -48,6 +54,17 @@ class ProcessingResult:
 def _work_dir():
     """中间产物（JSON、去重记录、failed）统一放系统 temp，用户目录只留 docx。"""
     return Path(tempfile.gettempdir()) / "further_evolution"
+
+
+def _render_reflow_docx(json_path, output_path, xsl_path=None):
+    """把 OCRDocument JSON 重排成横向 16:9 多栏 DOCX。"""
+    data = json.loads(Path(json_path).read_text(encoding="utf-8"))
+    blocks = order_blocks(data.get("blocks", []))
+    layout = analyze_layout(blocks)
+    groups = order_groups(layout.main)
+    columns = choose_columns(len(groups))
+    columns_list = reflow(groups, columns=columns)
+    render_reflow(layout, columns_list, str(output_path), xsl_path)
 
 
 def process_request(request, provider_factory=OpenAICompatProvider, pipeline_factory=Pipeline):
@@ -81,6 +98,16 @@ def process_request(request, provider_factory=OpenAICompatProvider, pipeline_fac
     work_json = Path(record["output_json"]) if record.get("output_json") else None
     work_docx = Path(record["output_docx"]) if record.get("output_docx") else None
 
+    # 竖转横：用 OCR 生成的 JSON 再重排成 16:9 多栏 DOCX（失败则回退竖向）
+    reflow_warning = None
+    if request.reflow and work_json and work_json.exists():
+        reflow_docx = work_dir / (work_json.stem + "_reflow.docx")
+        try:
+            _render_reflow_docx(work_json, reflow_docx)
+            work_docx = reflow_docx
+        except Exception as exc:
+            reflow_warning = "竖转横重排失败，已回退为竖向 Word：{}".format(exc)
+
     # 仅把 DOCX 复制到用户目录；JSON/去重记录/failed 留在 temp
     final_docx = None
     if work_docx and work_docx.exists():
@@ -91,5 +118,5 @@ def process_request(request, provider_factory=OpenAICompatProvider, pipeline_fac
         status=status,
         output_json=work_json,
         output_docx=final_docx,
-        error=record.get("error"),
+        error=record.get("error") or reflow_warning,
     )
