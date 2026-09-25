@@ -7,7 +7,11 @@
 
 import os
 
+import latex2mathml
+
 block_cipher = None
+
+_latex2mathml_dir = os.path.dirname(latex2mathml.__file__)
 
 a = Analysis(
     ['run.py'],
@@ -16,7 +20,9 @@ a = Analysis(
         os.path.abspath('phase0'),
     ],
     binaries=[],
-    datas=[],
+    datas=[
+        (os.path.join(_latex2mathml_dir, 'unimathsymbols.txt'), 'latex2mathml'),
+    ],
     # phase1/pipeline.py 用「无包前缀」方式导入 phase0 模块，需显式声明
     hiddenimports=[
         'docx_builder',
