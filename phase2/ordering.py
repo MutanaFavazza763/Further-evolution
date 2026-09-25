@@ -7,7 +7,7 @@
 
 # 归一化坐标阈值
 SPAN_WIDTH_THRESHOLD = 0.6   # width > 0.6 视为「跨栏」
-COLUMN_GAP_THRESHOLD = 0.3   # cx 相邻最大间隙 > 0.3 视为分栏
+COLUMN_GAP_THRESHOLD = 0.15  # cx 相邻最大间隙 > 0.15 视为分栏
 COLUMN_SPLIT = 0.5           # cx < 0.5 左栏，>= 0.5 右栏
 
 

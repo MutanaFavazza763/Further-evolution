@@ -68,6 +68,21 @@ class TestLayoutBbox(unittest.TestCase):
             ["左1", "左2", "左3", "右1", "右2", "右3"],
         )
 
+    def test_realistic_double_column_separates(self):
+        blocks = _load("realistic_double_column_bbox.json")["blocks"]
+        layout = analyze_layout(order_blocks(blocks))
+        self.assertEqual(_labels_of(layout.spanning), [])
+        self.assertEqual(
+            _labels_of(layout.main),
+            ["10", "11", "12", "13", "14", "15"],
+        )
+
+    def test_single_column_scattered_not_split(self):
+        blocks = _load("single_column_scattered_bbox.json")["blocks"]
+        layout = analyze_layout(order_blocks(blocks))
+        self.assertEqual(_labels_of(layout.spanning), [])
+        self.assertEqual(_labels_of(layout.main), ["1", "2", "3", "4"])
+
 
 if __name__ == "__main__":
     unittest.main()
