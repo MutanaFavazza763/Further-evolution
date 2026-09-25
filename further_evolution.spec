@@ -32,7 +32,26 @@ a = Analysis(
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
-    excludes=[],
+    excludes=[
+        # 与 GUI / OCR / DOCX 运行无关的体积大户，排除以缩小产物
+        'tkinter',
+        'matplotlib',
+        'PIL',
+        'numpy',
+        'scipy',
+        'pandas',
+        'IPython',
+        'jedi',
+        'pytest',
+        'setuptools',
+        'pip',
+        'wheel',
+        # 标准库测试/文档模块，运行时不需要
+        'unittest',
+        'test',
+        'pydoc',
+        'doctest',
+    ],
     noarchive=False,
 )
 
@@ -47,7 +66,7 @@ exe = EXE(
     name='FurtherEvolution',
     debug=False,
     bootloader_ignore_signals=False,
-    strip=False,
+    strip=True,
     upx=False,
     console=False,
     disable_windowed_traceback=False,
