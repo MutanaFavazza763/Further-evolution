@@ -22,6 +22,7 @@ a = Analysis(
     binaries=[],
     datas=[
         (os.path.join(_latex2mathml_dir, 'unimathsymbols.txt'), 'latex2mathml'),
+        (os.path.abspath('app_icon.ico'), '.'),
     ],
     # phase1/pipeline.py 用「无包前缀」方式导入 phase0 模块，需显式声明
     hiddenimports=[

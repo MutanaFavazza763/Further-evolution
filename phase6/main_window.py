@@ -4,7 +4,7 @@ import sys
 from pathlib import Path
 
 from PySide6.QtCore import QObject, QThread, Signal
-from PySide6.QtGui import QFont, QFontDatabase
+from PySide6.QtGui import QFont, QFontDatabase, QIcon
 from PySide6.QtWidgets import (
     QApplication,
     QCheckBox,
@@ -37,6 +37,12 @@ def configure_application_font(app):
     family = next((name for name in preferred_families if name in available), app.font().family())
     app.setFont(QFont(family, 10))
     return family
+
+
+def _resource_path(filename):
+    """PyInstaller 打包后从临时目录读资源，开发时从项目根读。"""
+    base = getattr(sys, "_MEIPASS", Path(__file__).resolve().parent.parent)
+    return str(Path(base) / filename)
 
 
 class ProcessingWorker(QObject):
@@ -72,6 +78,7 @@ class FurtherEvolutionMainWindow(QMainWindow):
         self.worker_thread = None
         self.worker = None
         self.setWindowTitle("Evolution")
+        self.setWindowIcon(QIcon(_resource_path("app_icon.ico")))
         self.resize(860, 670)
         self._build_ui()
 
@@ -246,6 +253,7 @@ class FurtherEvolutionMainWindow(QMainWindow):
 def main():
     app = QApplication.instance() or QApplication(sys.argv)
     configure_application_font(app)
+    app.setWindowIcon(QIcon(_resource_path("app_icon.ico")))
     window = FurtherEvolutionMainWindow()
     window.show()
     return app.exec()
