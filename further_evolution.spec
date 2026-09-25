@@ -64,6 +64,7 @@ exe = EXE(
     a.datas,
     [],
     name='FurtherEvolution',
+    icon=os.path.abspath('app_icon.ico'),
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,

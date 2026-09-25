@@ -61,6 +61,8 @@
 ├── phase6/               桌面 GUI 主窗口 + 后台 QThread OCR + OCRDocument 编辑器
 ├── .github/workflows/build.yml   tag 触发打包 + 发布 Release
 ├── further_evolution.spec        PyInstaller 单文件、无控制台窗口
+├── app_icon.ico                  Windows 程序图标（16~256 多尺寸）
+├── app_icon.png                  图标源文件（高分辨率 PNG）
 ├── run.py                PyInstaller 打包入口（启动 phase6.main_window.main）
 ├── requirements.txt      GUI 运行时与打包时依赖
 └── PROJECT_SPEC.md       项目总体规范（OCRDocument 结构、开发阶段、Git 规则）
@@ -144,6 +146,8 @@ pip install pyinstaller
 pyinstaller --clean --noconfirm further_evolution.spec
 # 产物：dist\FurtherEvolution.exe
 ```
+
+程序图标：打包时 `further_evolution.spec` 会读取项目根的 `app_icon.ico`（含 16/24/32/48/64/128/256 多尺寸）写入 exe。如需更换图标，替换 `app_icon.ico`（Windows 用 `.ico`）即可，`app_icon.png` 为源文件。
 
 注意：
 
