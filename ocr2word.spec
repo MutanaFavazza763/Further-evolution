@@ -1,0 +1,48 @@
+# -*- mode: python ; coding: utf-8 -*-
+"""PyInstaller 打包配置：单文件、无控制台窗口的 OCR2Word 桌面应用。
+
+用法：pyinstaller --clean --noconfirm ocr2word.spec
+产物：dist/OCR2Word.exe
+"""
+
+import os
+
+block_cipher = None
+
+a = Analysis(
+    ['run.py'],
+    pathex=[
+        os.path.abspath('.'),
+        os.path.abspath('phase0'),
+    ],
+    binaries=[],
+    datas=[],
+    # phase1/pipeline.py 用「无包前缀」方式导入 phase0 模块，需显式声明
+    hiddenimports=[
+        'docx_builder',
+        'ocrdoc_schema',
+        'provider',
+    ],
+    hookspath=[],
+    hooksconfig={},
+    runtime_hooks=[],
+    excludes=[],
+    noarchive=False,
+)
+
+pyz = PYZ(a.pure)
+
+exe = EXE(
+    pyz,
+    a.scripts,
+    a.binaries,
+    a.datas,
+    [],
+    name='OCR2Word',
+    debug=False,
+    bootloader_ignore_signals=False,
+    strip=False,
+    upx=False,
+    console=False,
+    disable_windowed_traceback=False,
+)
