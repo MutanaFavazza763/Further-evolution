@@ -221,9 +221,13 @@ class FurtherEvolutionMainWindow(QMainWindow):
 
     def _processing_finished(self):
         self.process_button.setEnabled(True)
-        self.api_key_input.clear()
         self.worker = None
         self.worker_thread = None
+
+    def closeEvent(self, event):
+        """软件关闭时再清空 API Key，避免一次一输。"""
+        self.api_key_input.clear()
+        super().closeEvent(event)
 
     def open_editor(self):
         if not self.latest_json:
