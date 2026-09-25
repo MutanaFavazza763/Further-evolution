@@ -6,11 +6,12 @@ from pathlib import Path
 from PySide6.QtCore import QObject, QThread, Signal
 from PySide6.QtGui import QFont, QFontDatabase
 from PySide6.QtWidgets import (
+    QApplication,
+    QCheckBox,
     QFileDialog,
     QFormLayout,
     QGroupBox,
     QHBoxLayout,
-    QApplication,
     QLabel,
     QLineEdit,
     QMainWindow,
@@ -104,6 +105,8 @@ class OCR2WordMainWindow(QMainWindow):
         self.output_input.setText(str(Path.cwd() / "output"))
         files_form.addRow("输入图片", image_row)
         files_form.addRow("输出目录", output_row)
+        self.reflow_checkbox = QCheckBox("竖转横：生成 16:9 横向多栏 Word（不勾选则为竖向）")
+        files_form.addRow("排版方式", self.reflow_checkbox)
         layout.addWidget(files_box)
 
         ai_box = QGroupBox("2. 本次 AI 配置")
@@ -181,6 +184,7 @@ class OCR2WordMainWindow(QMainWindow):
             model=self.model_input.text().strip(),
             timeout=self.timeout_input.value(),
             max_retries=self.retry_input.value(),
+            reflow=self.reflow_checkbox.isChecked(),
         )
 
     def _append_status(self, message):
@@ -214,6 +218,8 @@ class OCR2WordMainWindow(QMainWindow):
         self.latest_json = result.output_json
         self.open_editor_button.setEnabled(True)
         self._append_status("处理完成：已生成 {} 和 {}".format(result.output_json.name, result.output_docx.name))
+        if result.error:
+            self._append_status("警告：{}".format(result.error))
 
     def _processing_failed(self, message):
         self._append_status("处理失败：{}".format(message))
