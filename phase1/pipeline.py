@@ -80,13 +80,15 @@ class ProcessRecordStore:
 class Pipeline:
     """单张图片的完整处理流水线。"""
 
-    def __init__(self, provider, input_dir, output_dir, failed_dir, store, xsl_path=None):
+    def __init__(self, provider, input_dir, output_dir, failed_dir, store, xsl_path=None,
+                 move_failed=True):
         self.provider = provider
         self.input_dir = Path(input_dir)
         self.output_dir = Path(output_dir)
         self.failed_dir = Path(failed_dir)
         self.store = store
         self.xsl_path = xsl_path
+        self.move_failed = move_failed
         self.output_dir.mkdir(parents=True, exist_ok=True)
         self.failed_dir.mkdir(parents=True, exist_ok=True)
 
@@ -180,8 +182,11 @@ class Pipeline:
         return self.output_dir / "{}_{}{}".format(stem, ts, suffix)
 
     def _on_failure(self, image_path, record):
-        """失败处理：记录 + 移到 failed/，返回 'failed'。"""
+        """失败处理：记录，并按配置决定是否移到 failed/。"""
         self.store.set(record["sha256"], record)
+        if not self.move_failed:
+            logger.error("处理失败，保留原文件：%s（%s）", image_path.name, record["error"])
+            return "failed"
         dest = self.failed_dir / image_path.name
         if dest.exists():
             dest = self.failed_dir / "{}_{}{}".format(
