@@ -4,11 +4,11 @@
     python phase0/main.py [--input-dir input] [--output-dir output] ...
 
 环境变量（API Key 只从环境变量读取，禁止硬编码）：
-    OCR2WORD_API_KEY      必填
-    OCR2WORD_API_BASE     可选，默认 https://api.deepseek.com
-    OCR2WORD_MODEL        可选，默认 deepseek-flash
-    OCR2WORD_TIMEOUT      可选，默认 120 秒
-    OCR2WORD_MAX_RETRIES  可选，默认 2
+    FURTHEREVO_API_KEY      必填
+    FURTHEREVO_API_BASE     可选，默认 https://api.deepseek.com
+    FURTHEREVO_MODEL        可选，默认 deepseek-flash
+    FURTHEREVO_TIMEOUT      可选，默认 120 秒
+    FURTHEREVO_MAX_RETRIES  可选，默认 2
 """
 
 import argparse
@@ -70,15 +70,15 @@ def main():
 
     setup_logging(args.logs_dir)
 
-    api_key = os.environ.get("OCR2WORD_API_KEY")
+    api_key = os.environ.get("FURTHEREVO_API_KEY")
     if not api_key:
-        logger.error("未设置环境变量 OCR2WORD_API_KEY")
-        logger.error("示例(PowerShell)：$env:OCR2WORD_API_KEY = \"your-key\"")
+        logger.error("未设置环境变量 FURTHEREVO_API_KEY")
+        logger.error("示例(PowerShell)：$env:FURTHEREVO_API_KEY = \"your-key\"")
         sys.exit(2)
-    base_url = os.environ.get("OCR2WORD_API_BASE", "https://api.deepseek.com")
-    model = os.environ.get("OCR2WORD_MODEL", "deepseek-flash")
-    timeout = int(os.environ.get("OCR2WORD_TIMEOUT", "120"))
-    max_retries = int(os.environ.get("OCR2WORD_MAX_RETRIES", "2"))
+    base_url = os.environ.get("FURTHEREVO_API_BASE", "https://api.deepseek.com")
+    model = os.environ.get("FURTHEREVO_MODEL", "deepseek-flash")
+    timeout = int(os.environ.get("FURTHEREVO_TIMEOUT", "120"))
+    max_retries = int(os.environ.get("FURTHEREVO_MAX_RETRIES", "2"))
 
     input_dir = Path(args.input_dir)
     input_dir.mkdir(parents=True, exist_ok=True)

@@ -1,8 +1,8 @@
 # -*- mode: python ; coding: utf-8 -*-
-"""PyInstaller 打包配置：单文件、无控制台窗口的 OCR2Word 桌面应用。
+"""PyInstaller 打包配置：单文件、无控制台窗口的 展台再进化（Further-evolution） 桌面应用。
 
-用法：pyinstaller --clean --noconfirm ocr2word.spec
-产物：dist/OCR2Word.exe
+用法：pyinstaller --clean --noconfirm further_evolution.spec
+产物：dist/FurtherEvolution.exe
 """
 
 import os
@@ -44,7 +44,7 @@ exe = EXE(
     a.binaries,
     a.datas,
     [],
-    name='OCR2Word',
+    name='FurtherEvolution',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,

@@ -1,4 +1,4 @@
-# OCR2Word GUI 运行时依赖（打包 + 运行都需要）
+# 展台再进化（Further-evolution） GUI 运行时依赖（打包 + 运行都需要）
 requests>=2.31
 jsonschema>=4.20
 python-docx>=1.1.0

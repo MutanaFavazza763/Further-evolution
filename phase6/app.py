@@ -1,4 +1,4 @@
-"""OCR2Word 桌面应用入口。"""
+"""展台再进化（Further-evolution） 桌面应用入口。"""
 
 from phase6.main_window import main
 

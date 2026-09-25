@@ -26,10 +26,10 @@ jobs:
           pip install -r requirements.txt pyinstaller
 
       - name: Build with PyInstaller
-        run: pyinstaller --clean --noconfirm ocr2word.spec
+        run: pyinstaller --clean --noconfirm further_evolution.spec
 
       - name: Publish to GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: dist/OCR2Word.exe
+          files: dist/FurtherEvolution.exe
           generate_release_notes: true

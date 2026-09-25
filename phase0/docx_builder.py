@@ -114,7 +114,7 @@ def _add_table(doc, rows, xsl_path):
 
 def render_document(data, output_path, xsl_path=None):
     xsl_path = xsl_path or os.environ.get(
-        "OCR2WORD_MML2OMML_XSL", DEFAULT_XSL_PATH
+        "FURTHEREVO_MML2OMML_XSL", DEFAULT_XSL_PATH
     )
     doc = Document()
 
@@ -257,7 +257,7 @@ def render_reflow(layout, columns, output_path, xsl_path=None):
     columns：list[list[BlockGroup]]，来自 phase2.reflow.reflow
     """
     xsl_path = xsl_path or os.environ.get(
-        "OCR2WORD_MML2OMML_XSL", DEFAULT_XSL_PATH
+        "FURTHEREVO_MML2OMML_XSL", DEFAULT_XSL_PATH
     )
     doc = Document()
     _setup_landscape_16_9(doc)

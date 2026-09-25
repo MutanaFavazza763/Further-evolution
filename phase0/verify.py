@@ -4,11 +4,11 @@
     python phase0/verify.py <图片路径>
 
 环境变量（API Key 只从环境变量读取，禁止硬编码）：
-    OCR2WORD_API_KEY      必填
-    OCR2WORD_API_BASE     可选，默认 https://api.openai.com/v1
-    OCR2WORD_MODEL        可选，默认 gpt-4o
-    OCR2WORD_TIMEOUT      可选，默认 120 秒
-    OCR2WORD_MAX_RETRIES  可选，默认 2
+    FURTHEREVO_API_KEY      必填
+    FURTHEREVO_API_BASE     可选，默认 https://api.openai.com/v1
+    FURTHEREVO_MODEL        可选，默认 gpt-4o
+    FURTHEREVO_TIMEOUT      可选，默认 120 秒
+    FURTHEREVO_MAX_RETRIES  可选，默认 2
 """
 
 import argparse
@@ -42,11 +42,11 @@ def main():
     args = parser.parse_args()
 
     # 1) 环境变量（API Key 不硬编码）
-    api_key = _env_or_exit("OCR2WORD_API_KEY")
-    base_url = os.environ.get("OCR2WORD_API_BASE", "https://api.openai.com/v1")
-    model = os.environ.get("OCR2WORD_MODEL", "gpt-4o")
-    timeout = int(os.environ.get("OCR2WORD_TIMEOUT", "120"))
-    max_retries = int(os.environ.get("OCR2WORD_MAX_RETRIES", "2"))
+    api_key = _env_or_exit("FURTHEREVO_API_KEY")
+    base_url = os.environ.get("FURTHEREVO_API_BASE", "https://api.openai.com/v1")
+    model = os.environ.get("FURTHEREVO_MODEL", "gpt-4o")
+    timeout = int(os.environ.get("FURTHEREVO_TIMEOUT", "120"))
+    max_retries = int(os.environ.get("FURTHEREVO_MAX_RETRIES", "2"))
 
     # 2) 读图片
     image_path = Path(args.image)

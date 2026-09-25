@@ -1,4 +1,4 @@
-"""面向用户的 OCR2Word 主窗口。"""
+"""面向用户的 展台再进化（Further-evolution） 主窗口。"""
 
 import sys
 from pathlib import Path
@@ -60,7 +60,7 @@ class ProcessingWorker(QObject):
             self.failed.emit(result.error or "处理未完成：{}".format(result.status))
 
 
-class OCR2WordMainWindow(QMainWindow):
+class FurtherEvolutionMainWindow(QMainWindow):
     """选择图片、配置临时 AI 凭据并启动 OCR 的主窗口。"""
 
     def __init__(self):
@@ -70,7 +70,7 @@ class OCR2WordMainWindow(QMainWindow):
         self.editor_windows = []
         self.worker_thread = None
         self.worker = None
-        self.setWindowTitle("OCR2Word")
+        self.setWindowTitle("展台再进化")
         self.resize(860, 670)
         self._build_ui()
 
@@ -90,7 +90,7 @@ class OCR2WordMainWindow(QMainWindow):
         layout.setContentsMargins(28, 24, 28, 24)
         layout.setSpacing(16)
 
-        title = QLabel("OCR2Word")
+        title = QLabel("展台再进化")
         title.setStyleSheet("font-size: 26px; font-weight: 600;")
         subtitle = QLabel("选择一张图片，填写本次使用的模型配置，即可生成可编辑 Word。")
         subtitle.setStyleSheet("color: #5f6368;")
@@ -236,7 +236,7 @@ class OCR2WordMainWindow(QMainWindow):
 def main():
     app = QApplication.instance() or QApplication(sys.argv)
     configure_application_font(app)
-    window = OCR2WordMainWindow()
+    window = FurtherEvolutionMainWindow()
     window.show()
     return app.exec()
 

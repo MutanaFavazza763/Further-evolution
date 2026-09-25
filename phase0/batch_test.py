@@ -95,14 +95,14 @@ def main():
     parser.add_argument("--output-dir", default=DEFAULT_OUTPUT_DIR)
     args = parser.parse_args()
 
-    api_key = os.environ.get("OCR2WORD_API_KEY")
+    api_key = os.environ.get("FURTHEREVO_API_KEY")
     if not api_key:
-        print("错误：未设置环境变量 OCR2WORD_API_KEY")
+        print("错误：未设置环境变量 FURTHEREVO_API_KEY")
         sys.exit(2)
-    base_url = os.environ.get("OCR2WORD_API_BASE", "https://api.deepseek.com")
-    model = os.environ.get("OCR2WORD_MODEL", "deepseek-flash")
-    timeout = int(os.environ.get("OCR2WORD_TIMEOUT", "120"))
-    max_retries = int(os.environ.get("OCR2WORD_MAX_RETRIES", "2"))
+    base_url = os.environ.get("FURTHEREVO_API_BASE", "https://api.deepseek.com")
+    model = os.environ.get("FURTHEREVO_MODEL", "deepseek-flash")
+    timeout = int(os.environ.get("FURTHEREVO_TIMEOUT", "120"))
+    max_retries = int(os.environ.get("FURTHEREVO_MAX_RETRIES", "2"))
 
     input_dir = Path(args.input_dir)
     if not input_dir.is_dir():

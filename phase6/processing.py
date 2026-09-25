@@ -47,7 +47,7 @@ class ProcessingResult:
 
 def _work_dir():
     """中间产物（JSON、去重记录、failed）统一放系统 temp，用户目录只留 docx。"""
-    return Path(tempfile.gettempdir()) / "ocr2word"
+    return Path(tempfile.gettempdir()) / "further_evolution"
 
 
 def process_request(request, provider_factory=OpenAICompatProvider, pipeline_factory=Pipeline):
@@ -66,7 +66,7 @@ def process_request(request, provider_factory=OpenAICompatProvider, pipeline_fac
     )
     work_dir = _work_dir()
     work_dir.mkdir(parents=True, exist_ok=True)
-    store = ProcessRecordStore(work_dir / ".ocr2word_processed.json")
+    store = ProcessRecordStore(work_dir / ".further_evolution_processed.json")
     pipeline = pipeline_factory(
         provider=provider,
         input_dir=request.image_path.parent,

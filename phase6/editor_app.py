@@ -30,7 +30,7 @@ class OCRDocumentEditor(QMainWindow):
     def __init__(self, path=None):
         super().__init__()
         self.session = DocumentSession()
-        self.setWindowTitle("OCR2Word - OCRDocument 编辑器")
+        self.setWindowTitle("展台再进化 - OCRDocument 编辑器")
         self.resize(1100, 720)
 
         self.block_list = QListWidget()
@@ -88,7 +88,7 @@ class OCRDocumentEditor(QMainWindow):
 
     def _show_error(self, message):
         self.statusBar().showMessage(message, 8000)
-        QMessageBox.warning(self, "OCR2Word", message)
+        QMessageBox.warning(self, "展台再进化", message)
 
     def load_document(self, path):
         """加载指定 JSON 到编辑器和 block 预览。"""
@@ -149,7 +149,7 @@ class OCRDocumentEditor(QMainWindow):
 
 
 def main(argv=None):
-    parser = argparse.ArgumentParser(description="OCR2Word OCRDocument 编辑器")
+    parser = argparse.ArgumentParser(description="展台再进化 OCRDocument 编辑器")
     parser.add_argument("json_path", nargs="?", help="可选：启动时加载的 OCRDocument JSON")
     args = parser.parse_args(argv)
 

@@ -1,8 +1,8 @@
-# OCR2Word 项目规范
+# 展台再进化（Further-evolution） 项目规范
 
 ## 1. 项目目标
 
-OCR2Word 是一个 Windows 桌面软件。
+展台再进化（原 OCR2Word）是一个 Windows 桌面软件。
 
 核心流程：
 

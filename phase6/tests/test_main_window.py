@@ -5,16 +5,16 @@ os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
 from PySide6.QtWidgets import QApplication, QLineEdit
 
-from phase6.main_window import OCR2WordMainWindow, configure_application_font
+from phase6.main_window import FurtherEvolutionMainWindow, configure_application_font
 
 
-class TestOCR2WordMainWindow(unittest.TestCase):
+class TestFurtherEvolutionMainWindow(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.app = QApplication.instance() or QApplication([])
 
     def test_initial_form_does_not_contain_an_api_key(self):
-        window = OCR2WordMainWindow()
+        window = FurtherEvolutionMainWindow()
         self.assertEqual(window.api_key_input.text(), "")
         self.assertEqual(window.api_key_input.echoMode(), QLineEdit.EchoMode.Password)
         self.assertTrue(window.output_input.text().endswith("output"))
